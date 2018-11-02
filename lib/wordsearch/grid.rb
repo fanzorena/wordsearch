@@ -1,3 +1,4 @@
+require "I18n"
 module WordSearch
   class Grid
     attr_reader :rows, :columns, :size
@@ -37,7 +38,7 @@ module WordSearch
         raise ArgumentError, "expected 2..3 arguments"
       end
 
-      @grid[index(row_or_pos, column)] = value
+      @grid[index(row_or_pos, column)] = I18n.transliterate(value, :locale => :pt)
     end
 
     def dup

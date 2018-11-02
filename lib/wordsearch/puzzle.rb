@@ -1,4 +1,3 @@
-require 'prawn'
 require 'json'
 require 'wordsearch/grid'
 require 'wordsearch/locale'
@@ -133,65 +132,13 @@ module WordSearch
       grid = Array.new(@rows) { Array.new(@columns) };
       @rows.times do |row|
         @columns.times do |col|
-          grid[row][col] = I18n.transliterate(@grid[row, col], :locale => :pt)
+          grid[row][col] = @grid[row, col]
         end
       end
       words = @vocabulary.dup.to_a
       solution_words = words.dup.map { |w| I18n.transliterate(w, :locale => :pt) }
       s = {:words => @vocabulary.dup.to_a, :solution => solution_words, :grid => grid}
       s.to_json
-    end
-
-    def to_pdf(box_size: 18, margin: 18, font_name: "Helvetica", clue_font: font_name, solution: true, clues: true)
-      height = box_size * @rows
-      width = box_size * @columns
-
-      pdf = Prawn::Document.new(skip_page_creation: true)
-
-      if clues
-        clue_height = height.to_f / @vocabulary.length
-        clue_height = box_size if clue_height > box_size
-        clue_font_size = clue_height * 0.7
-        clue_margin = 72 / 4.0
-
-        font = Prawn::Font.load(pdf, clue_font)
-        max = @vocabulary.map { |word| font.compute_width_of(word, size: clue_font_size)+1 }.max
-
-        width += clue_margin + max
-      end
-
-      pages = solution ? 2 : 1
-
-      pages.times do |page|
-        pdf.start_new_page(
-          size: [width+margin*2, height+margin*2],
-          margin: margin)
-
-        pdf.font font_name, size: box_size*0.7
-
-        @rows.times do |row|
-          y = (@rows - row) * box_size
-
-          @columns.times do |col|
-            x = col * box_size
-            pdf.bounding_box [x, y], width: box_size, height: box_size do
-              pdf.text(@grid[row, col].upcase, align: :center, valign: :center,
-                color: ((page == 1 && @solution[row, col]) ? "ff0000" : "000000"))
-            end
-          end
-        end
-
-        if clues
-          pdf.font clue_font
-          x = @columns * box_size + clue_margin
-          @vocabulary.each.with_index do |word, index|
-            y = (@rows * box_size) - index * clue_height
-            pdf.text_box word, at: [x, y], height: clue_height, size: clue_font_size, valign: :center
-          end
-        end
-      end
-
-      pdf
     end
   end
 end

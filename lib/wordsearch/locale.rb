@@ -3,7 +3,7 @@ module WordSearch
         def initialize()
             store_translations(:pt, :i18n => {
                 :transliterate => {
-                    :rule {
+                    :rule => {
                     "ä" => "ae",
                     "æ" => "ae",
                     "ǽ" => "ae",
@@ -20,11 +20,9 @@ module WordSearch
                     "Å" => "A",
                     "Ǻ" => "A",
                     "Ā" => "A",
-                    "Å" => "A",
                     "Ă" => "A",
                     "Ą" => "A",
                     "Ǎ" => "A",
-                    "Ä" => "Ae",
                     "à" => "a",
                     "á" => "a",
                     "â" => "a",
@@ -61,7 +59,6 @@ module WordSearch
                     "Ė" => "E",
                     "Ę" => "E",
                     "Ě" => "E",
-                    "Ë" => "E",
                     "è" => "e",
                     "é" => "e",
                     "ê" => "e",
@@ -143,7 +140,6 @@ module WordSearch
                     "Ơ" => "O",
                     "Ø" => "O",
                     "Ǿ" => "O",
-                    "Ö" => "Oe",
                     "ò" => "o",
                     "ó" => "o",
                     "ô" => "o",
@@ -197,7 +193,6 @@ module WordSearch
                     "Ǘ" => "U",
                     "Ǚ" => "U",
                     "Ǜ" => "U",
-                    "Ü" => "Ue",
                     "ù" => "u",
                     "ú" => "u",
                     "û" => "u",
