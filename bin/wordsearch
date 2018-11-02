@@ -3,6 +3,8 @@
 require 'wordsearch'
 require 'optparse'
 
+Encoding::default_external = Encoding::UTF_8
+
 options = {
   rows: 15,
   columns: 15,
@@ -51,6 +53,9 @@ OptionParser.new do |opts|
   opts.on "-w", "--word-file FILE" do |file|
     options[:words].concat(File.readlines(file).map { |word| word.strip })
   end
+  opts.on "-j", "--json" do |json|
+    options[:json] = json
+  end
   opts.on "-t", "--[no-]text" do |text|
     options[:text] = text
   end
@@ -80,7 +85,10 @@ puzzle = WordSearch::Puzzle.new(options[:words],
 puts "seed: #{puzzle.seed}"
 puts "unused squares: #{puzzle.unused_squares} (of #{puzzle.grid.size})"
 
-if options[:text]
+if options[:json]
+  puts
+  puts puzzle.to_json()
+elsif options[:text]
   puts
   puts puzzle.to_s(solution: options[:solve])
 else

@@ -1,5 +1,8 @@
 require 'prawn'
+require 'json'
 require 'wordsearch/grid'
+require 'wordsearch/locale'
+require 'I18n'
 
 module WordSearch
   class Puzzle
@@ -124,6 +127,19 @@ module WordSearch
       end
 
       s
+    end
+
+    def to_json()
+      grid = Array.new(@rows) { Array.new(@columns) };
+      @rows.times do |row|
+        @columns.times do |col|
+          grid[row][col] = I18n.transliterate(@grid[row, col], :locale => :pt)
+        end
+      end
+      words = @vocabulary.dup.to_a
+      solution_words = words.dup.map { |w| I18n.transliterate(w, :locale => :pt) }
+      s = {:words => @vocabulary.dup.to_a, :solution => solution_words, :grid => grid}
+      s.to_json
     end
 
     def to_pdf(box_size: 18, margin: 18, font_name: "Helvetica", clue_font: font_name, solution: true, clues: true)
