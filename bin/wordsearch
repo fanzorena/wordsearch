@@ -69,14 +69,12 @@ puzzle = WordSearch::Puzzle.new(options[:words],
   backward: options[:backward],
   message: options[:message],
   seed: options[:seed])
-
-puts "seed: #{puzzle.seed}"
-puts "unused squares: #{puzzle.unused_squares} (of #{puzzle.grid.size})"
   
 if options[:text]
+  puts "seed: #{puzzle.seed}"
+  puts "unused squares: #{puzzle.unused_squares} (of #{puzzle.grid.size})"
   puts
   puts puzzle.to_s(solution: options[:solve])
 else
-  puts
   puts puzzle.to_json()
 end

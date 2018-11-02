@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.homepage    = "http://github.com/fanzorena/wordsearch"
   gem.summary     = "A word-search puzzle generator, utility and library. Fork from Jamis Buck generator (https://github.com/jamis/wordsearch)"
   gem.description = %q{Generates word-search puzzles and emits them to PDF. Customizable.}
-  gem.license     = 'CC Attribution 4.0 International'
+  gem.license     = 'CC-BY-4.0'
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = "wordsearch"

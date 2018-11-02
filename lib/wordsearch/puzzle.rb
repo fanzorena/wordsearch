@@ -25,6 +25,7 @@ module WordSearch
 
     attr_reader :grid
     attr_reader :solution
+    attr_reader :solution_dict
 
     def initialize(vocabulary, rows: 15, columns: 15, diagonal: false, backward: false, message: nil, seed: Time.now.to_i)
       @vocabulary = vocabulary
@@ -35,6 +36,7 @@ module WordSearch
       @backward = backward
       @message = message
       @seed = seed
+      @solution_dict = {};
 
       srand(@seed)
 
@@ -94,12 +96,14 @@ module WordSearch
 
       dr, dc = DIRS[direction]
       letters = word.chars
+      @solution_dict[word] = Array.new();
 
       while (row >= 0 && row < copy.rows) && (column >= 0 && column < copy.columns)
         letter = letters.shift || break
 
         if copy[row, column].nil? || copy[row, column] == letter
           copy[row, column] = letter
+          @solution_dict[word].push([column, row])
           row += dr
           column += dc
         else
@@ -129,7 +133,7 @@ module WordSearch
     end
 
     def to_json()
-      grid = Array.new(@rows) { Array.new(@columns) };
+      grid = Array.new(@rows) { Array.new(@columns) }
       @rows.times do |row|
         @columns.times do |col|
           grid[row][col] = @grid[row, col]
@@ -137,7 +141,7 @@ module WordSearch
       end
       words = @vocabulary.dup.to_a
       solution_words = words.dup.map { |w| I18n.transliterate(w, :locale => :pt) }
-      s = {:words => @vocabulary.dup.to_a, :solution => solution_words, :grid => grid}
+      s = {:words => @vocabulary.dup.to_a, :solution => @solution_dict, :wordsNormalized => solution_words, :grid => grid}
       s.to_json
     end
   end
