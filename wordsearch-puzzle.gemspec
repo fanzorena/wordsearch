@@ -16,5 +16,5 @@ Gem::Specification.new do |gem|
   gem.executables   = "wordsearch"
   gem.require_paths = ["lib"]
 
-  gem.add_runtime_dependency = 'i18n'
+  gem.add_dependency "i18n"
 end
