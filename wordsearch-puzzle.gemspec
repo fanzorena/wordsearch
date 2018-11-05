@@ -15,4 +15,6 @@ Gem::Specification.new do |gem|
   gem.files         = `git ls-files`.split($\)
   gem.executables   = "wordsearch"
   gem.require_paths = ["lib"]
+
+  gem.add_runtime_dependency = 'i18n'
 end

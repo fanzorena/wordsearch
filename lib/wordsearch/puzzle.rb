@@ -1,7 +1,5 @@
 require 'json'
 require 'wordsearch/grid'
-require 'wordsearch/locale'
-require 'I18n'
 
 module WordSearch
   class Puzzle
@@ -140,8 +138,7 @@ module WordSearch
         end
       end
       words = @vocabulary.dup.to_a
-      solution_words = words.dup.map { |w| I18n.transliterate(w, :locale => :pt) }
-      s = {:words => @vocabulary.dup.to_a, :solution => @solution_dict, :wordsNormalized => solution_words, :grid => grid}
+      s = {:words => @vocabulary.dup.to_a, :solution => @solution_dict, :grid => grid}
       s.to_json
     end
   end
