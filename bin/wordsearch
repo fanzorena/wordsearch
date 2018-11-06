@@ -2,6 +2,7 @@
 
 require 'wordsearch'
 require 'optparse'
+require 'json'
 
 Encoding::default_external = Encoding::UTF_8
 
@@ -12,7 +13,9 @@ options = {
   diagonal: false,
   seed: Time.now.to_i,
   solve: false,
-  words: []
+  words: [],
+  word_count: 0,
+  word_rules: nil
 }
 
 OptionParser.new do |opts|
@@ -32,11 +35,11 @@ OptionParser.new do |opts|
   opts.on "-s", "--seed SEED" do |seed|
     options[:seed] = seed.to_i
   end
-  opts.on "-v", "--[no-]solve" do |solve|
-    options[:solve] = solve
+  opts.on "-k", "--word-count WORD_COUNT" do |word_count|
+    options[:word_count] = word_count.to_i;
   end
-  opts.on "-m", "--message MESSAGE" do |message|
-    options[:message] = message
+  opts.on "-q", "--word-rules RULES" do |rules|
+    options[:word_rules] = JSON.parse(File.read(rules));
   end
   opts.on "-w", "--word-file FILE" do |file|
     options[:words].concat(File.readlines(file).map { |word| word.strip })
@@ -46,6 +49,7 @@ OptionParser.new do |opts|
   end
   opts.on "-t", "--[no-]text" do |text|
     options[:text] = text
+    options[:solve] = text
   end
 end.parse!
 
@@ -58,8 +62,10 @@ options[:words].concat(ARGF.readlines.map { |word| word.strip }) if ARGV.last ==
 
 if options[:words].empty?
   abort "you must specify some words to use to create the puzzle"
-elsif options[:words].any? { |w| w.length > options[:rows] && w.length > options[:columns] }
-  abort "words must all be between #{options[:rows]} and #{options[:columns]} letters"
+elsif options[:word_count] === 0
+  abort "you must specify how many words of the file to use (-wc COUNT)"
+#elsif options[:words].any? { |w| w.length > options[:rows] && w.length > options[:columns] }
+#  abort "words must all be between #{options[:rows]} and #{options[:columns]} letters"
 end
 
 puzzle = WordSearch::Puzzle.new(options[:words],
@@ -67,8 +73,9 @@ puzzle = WordSearch::Puzzle.new(options[:words],
   columns: options[:columns],
   diagonal: options[:diagonal],
   backward: options[:backward],
-  message: options[:message],
-  seed: options[:seed])
+  seed: options[:seed],
+  word_count: options[:word_count],
+  word_rules: options[:word_rules])
   
 if options[:text]
   puts "seed: #{puzzle.seed}"

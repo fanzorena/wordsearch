@@ -18,6 +18,8 @@ module WordSearch
     attr_reader :rows
     attr_reader :columns
     attr_reader :seed
+    attr_reader :word_count
+    attr_reader :word_rules
 
     attr_reader :unused_squares
 
@@ -25,16 +27,17 @@ module WordSearch
     attr_reader :solution
     attr_reader :solution_dict
 
-    def initialize(vocabulary, rows: 15, columns: 15, diagonal: false, backward: false, message: nil, seed: Time.now.to_i)
+    def initialize(vocabulary, rows: 15, columns: 15, diagonal: false, backward: false, seed: Time.now.to_i, word_count: 0, word_rules: nil)
       @vocabulary = vocabulary
 
       @rows = rows
       @columns = columns
       @diagonal = diagonal
       @backward = backward
-      @message = message
       @seed = seed
       @solution_dict = {};
+      @word_count = word_count;
+      @word_rules = word_rules;
 
       srand(@seed)
 
@@ -43,16 +46,48 @@ module WordSearch
 
     def _generate!
       words = @vocabulary.dup
-
-      directions = %i(right down)
-      directions += %i(rightdown) if @diagonal
-      directions += %i(left up) if @backward
-      directions += %i(leftup leftdown rightup) if @diagonal && @backward
+ 
+      if @backward
+        directions = %i(left up)
+        directions += %i(leftup leftdown)
+      else
+        directions = %i(right down)
+        directions += %i(rightdown rightup)
+      end
 
       grid = WordSearch::Grid.new(@rows, @columns)
       positions = (0...grid.size).to_a
-      stack = [ { grid: grid, word: words.shift, dirs: directions.shuffle, positions: positions.shuffle } ]
 
+      if !@word_rules.nil?
+        @word_rules.each do |length, count|
+          count = count.to_i
+
+          words_list = words.select { |w| 
+            w.length == length.to_i 
+          }
+
+          words -= words_list
+
+          if words_list.size > 0
+            _add_words(words_list, grid, directions, positions, count);
+            @word_count -= count;
+          end
+        end
+        if @word_count > 0
+          _add_words(words, @grid, directions, positions);
+        end
+      elsif
+        _add_words(words, grid, directions, positions);
+      end
+
+      @unused_squares = @grid.fill!()
+    end
+
+    def _add_words(words, grid, directions, positions, count = nil)
+      count = @word_count if count.nil?;
+      words = words.shuffle
+
+      stack = [ { grid: grid, word: words.shift, dirs: directions.shuffle, positions: positions.shuffle } ]
       while true
         current = stack.last
         raise "no solution possible" if !current
@@ -72,7 +107,8 @@ module WordSearch
         else
           grid = _try_word(current[:grid], current[:word], pos, dir)
           if grid
-            if words.any?
+            if words.any? && stack.length < count
+              words.shuffle;
               stack.push(grid: grid, word: words.shift, dirs: directions.shuffle,
                 positions: positions.shuffle)
             else
@@ -84,8 +120,6 @@ module WordSearch
 
       @grid = grid
       @solution = grid.dup
-
-      @unused_squares = @grid.fill!(@message)
     end
 
     def _try_word(grid, word, position, direction)

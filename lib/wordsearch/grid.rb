@@ -45,11 +45,10 @@ module WordSearch
       self.class.new(@rows, @columns, @grid.dup)
     end
 
-    def fill!(message=nil)
-      message = (message || "").downcase.gsub(/[^a-z]/, "").chars
+    def fill!()
       unused = @grid.select { |n| n.nil? }.length
       letters = ('a'..'z').to_a
-      @size.times { |pos| @grid[pos] ||= (message.shift || letters.sample) }
+      @size.times { |pos| @grid[pos] ||= letters.sample }
       unused
     end
   end
