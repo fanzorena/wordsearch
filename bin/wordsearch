@@ -29,9 +29,6 @@ OptionParser.new do |opts|
   opts.on "-b", "--[no-]backward" do |backward|
     options[:backward] = backward
   end
-  opts.on "-d", "--[no-]diagonal" do |diagonal|
-    options[:diagonal] = diagonal
-  end
   opts.on "-s", "--seed SEED" do |seed|
     options[:seed] = seed.to_i
   end
@@ -71,7 +68,6 @@ end
 puzzle = WordSearch::Puzzle.new(options[:words],
   rows: options[:rows],
   columns: options[:columns],
-  diagonal: options[:diagonal],
   backward: options[:backward],
   seed: options[:seed],
   word_count: options[:word_count],

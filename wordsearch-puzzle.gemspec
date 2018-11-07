@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.description = %q{Generates word-search puzzles and emits them to PDF. Customizable.}
   gem.license     = 'CC-BY-4.0'
 
-  gem.files         = `git ls-files`.split($\)
+  gem.files         = `git ls-files | grep -v .gem$`.split($\)
   gem.executables   = "wordsearch"
   gem.require_paths = ["lib"]
 

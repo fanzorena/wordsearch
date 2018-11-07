@@ -26,18 +26,19 @@ module WordSearch
     attr_reader :grid
     attr_reader :solution
     attr_reader :solution_dict
+    attr_reader :grid_words
 
-    def initialize(vocabulary, rows: 15, columns: 15, diagonal: false, backward: false, seed: Time.now.to_i, word_count: 0, word_rules: nil)
+    def initialize(vocabulary, rows: 15, columns: 15, backward: false, seed: Time.now.to_i, word_count: 0, word_rules: nil)
       @vocabulary = vocabulary
 
       @rows = rows
       @columns = columns
-      @diagonal = diagonal
       @backward = backward
       @seed = seed
       @solution_dict = {};
       @word_count = word_count;
       @word_rules = word_rules;
+      @grid_words = [];
 
       srand(@seed)
 
@@ -46,6 +47,8 @@ module WordSearch
 
     def _generate!
       words = @vocabulary.dup
+      max_length = [@columns, @rows].min
+      words = words.select {|w| w.length <= max_length}
  
       if @backward
         directions = %i(left up)
@@ -107,7 +110,8 @@ module WordSearch
         else
           grid = _try_word(current[:grid], current[:word], pos, dir)
           if grid
-            if words.any? && stack.length < count
+            @grid_words.push(current[:word])
+            if words.any? && @grid_words.length < count
               words.shuffle;
               stack.push(grid: grid, word: words.shift, dirs: directions.shuffle,
                 positions: positions.shuffle)
@@ -171,8 +175,7 @@ module WordSearch
           grid[row][col] = @grid[row, col]
         end
       end
-      words = @vocabulary.dup.to_a
-      s = {:words => @vocabulary.dup.to_a, :solution => @solution_dict, :grid => grid}
+      s = {:words => @grid_words.dup.to_a, :solution => @solution_dict, :grid => grid}
       s.to_json
     end
   end
